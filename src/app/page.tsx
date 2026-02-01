@@ -3,12 +3,44 @@
 import * as React from "react";
 import { SearchForm } from "@/components/search-form";
 import { FlightResults } from "@/components/flight-results";
+import { FilterSidebar, FilterState } from "@/components/filter-sidebar";
+import { PriceGraph } from "@/components/price-graph";
 import { FlightOffer, SearchParams } from "@/lib/types";
 
 export default function Home() {
   const [flights, setFlights] = React.useState<FlightOffer[]>([]);
   const [isLoading, setIsLoading] = React.useState(false);
   const [hasSearched, setHasSearched] = React.useState(false);
+
+  // Filter State
+  const [filters, setFilters] = React.useState<FilterState>({
+    priceRange: [0, 10000],
+    stops: [],
+    airlines: [],
+  });
+
+  // Effect to reset filters when new search is performed (optional, depends on UX preference)
+  // For now, we'll keep filters if they are broad enough, or reset them if they don't make sense.
+  // A simple approach is to reset price range to min/max of new results, and clear others.
+  React.useEffect(() => {
+    if (flights.length > 0) {
+      const prices = flights.map((f) => parseFloat(f.price.total));
+      const minPrice = Math.floor(Math.min(...prices));
+      const maxPrice = Math.ceil(Math.max(...prices));
+
+      // Only reset if current range is default or out of bounds (simplified for now: always reset bounds to fit data)
+      setFilters(prev => ({
+        ...prev,
+        priceRange: [minPrice, maxPrice],
+        // Keep selected airlines/stops if they still exist in new data? 
+        // For simplicity, let's keep them but user might see empty results if they don't match.
+        // Let's reset airlines as available airlines change completely.
+        airlines: [],
+        stops: []
+      }));
+    }
+  }, [flights]);
+
 
   const handleSearch = async (params: SearchParams) => {
     setIsLoading(true);
@@ -43,6 +75,39 @@ export default function Home() {
       setIsLoading(false);
     }
   };
+
+  // Filter Logic
+  const filteredFlights = React.useMemo(() => {
+    return flights.filter((flight) => {
+      const price = parseFloat(flight.price.total);
+
+      // Price Filter
+      if (price < filters.priceRange[0] || price > filters.priceRange[1]) {
+        return false;
+      }
+
+      // Airline Filter
+      if (filters.airlines.length > 0 && !filters.airlines.includes(flight.airline)) {
+        return false;
+      }
+
+      // Stops Filter
+      if (filters.stops.length > 0) {
+        const segmentCount = flight.itineraries[0].segments.length;
+        const stops = segmentCount - 1; // 1 segment = 0 stops
+
+        let match = false;
+        if (filters.stops.includes("0") && stops === 0) match = true;
+        if (filters.stops.includes("1") && stops === 1) match = true;
+        if (filters.stops.includes("2+") && stops >= 2) match = true;
+
+        if (!match) return false;
+      }
+
+      return true;
+    });
+  }, [flights, filters]);
+
 
   return (
     <main className="min-h-screen bg-[#FAFAF8] flex flex-col">
@@ -90,17 +155,38 @@ export default function Home() {
 
       {/* Results Section - Light */}
       <div className="flex-1 w-full bg-[#FAFAF8]">
-        <div className="max-w-6xl mx-auto px-6 py-16">
+        <div className="max-w-7xl mx-auto px-6 py-16">
           {hasSearched ? (
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
-              <div className="flex items-center gap-4 mb-10">
-                <div className="w-10 h-[1px] bg-[#C5A059]"></div>
-                <h2 className="text-sm font-light tracking-[0.3em] uppercase text-[#2C2C2C]">
-                  {flights.length > 0 ? `${flights.length} Flights Available` : "No Flights Found"}
-                </h2>
-                <div className="flex-1 h-[1px] bg-[#E5E5E5]"></div>
+
+              {/* Results Layout: Sidebar + List */}
+              <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+
+                {/* Sidebar */}
+                <div className="lg:col-span-1 space-y-6">
+                  {/* Price Graph */}
+                  <PriceGraph flights={filteredFlights} />
+
+                  {/* Filter Sidebar */}
+                  <FilterSidebar
+                    flights={flights} // Pass all flights to sidebar to determine available options
+                    filters={filters}
+                    onFilterChange={setFilters}
+                  />
+                </div>
+
+                {/* Flight List */}
+                <div className="lg:col-span-3">
+                  <div className="flex items-center gap-4 mb-8">
+                    <div className="w-10 h-[1px] bg-[#C5A059]"></div>
+                    <h2 className="text-sm font-light tracking-[0.3em] uppercase text-[#2C2C2C]">
+                      {filteredFlights.length > 0 ? `${filteredFlights.length} Flights Found` : "No Flights Match Filters"}
+                    </h2>
+                    <div className="flex-1 h-[1px] bg-[#E5E5E5]"></div>
+                  </div>
+                  <FlightResults flights={filteredFlights} />
+                </div>
               </div>
-              <FlightResults flights={flights} />
             </div>
           ) : (
             <div className="text-center mt-8 space-y-4">
