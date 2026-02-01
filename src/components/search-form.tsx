@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { format } from "date-fns";
-import { Calendar as CalendarIcon, Search, Plane } from "lucide-react";
+import { Calendar as CalendarIcon, Search, Plane, Armchair } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -46,95 +46,111 @@ export function SearchForm({ onSearch, isLoading }: SearchFormProps) {
     };
 
     return (
-        <Card className="w-full max-w-4xl mx-auto shadow-lg border-0 bg-white/80 backdrop-blur-md dark:bg-black/50">
-            <CardContent className="p-6">
-                <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-                    <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+        <Card className="w-full max-w-5xl mx-auto shadow-2xl border-0 bg-white/95 backdrop-blur-xl dark:bg-zinc-900/95 overflow-hidden ring-1 ring-zinc-900/5">
+            <div className="h-1 bg-gradient-to-r from-[#C5A059] via-[#E6C685] to-[#C5A059]"></div>
+            <CardContent className="p-8 md:p-10">
+                <form onSubmit={handleSubmit} className="flex flex-col gap-8">
+                    <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-end">
                         {/* Origin */}
-                        <div className="md:col-span-3 relative">
-                            <div className="absolute left-3 top-3 text-muted-foreground">
-                                <Plane className="h-5 w-5" />
+                        <div className="md:col-span-3 relative group">
+                            <label className="text-xs uppercase tracking-widest text-[#C5A059] font-bold mb-3 block pl-1">From</label>
+                            <div className="relative">
+                                <div className="absolute left-0 top-1/2 -translate-y-1/2 text-zinc-400 transition-colors group-hover:text-[#C5A059] pl-3 pointer-events-none">
+                                    <Plane className="h-5 w-5" />
+                                </div>
+                                <Input
+                                    placeholder="Origin City"
+                                    className="pl-12 h-14 text-lg border-0 border-b border-zinc-200 rounded-none focus-visible:ring-0 focus-visible:border-[#C5A059] transition-all bg-transparent placeholder:text-zinc-300 font-serif"
+                                    value={origin}
+                                    onChange={(e) => setOrigin(e.target.value)}
+                                    required
+                                />
                             </div>
-                            <Input
-                                placeholder="Where from? (e.g. JFK)"
-                                className="pl-10 h-12 text-base"
-                                value={origin}
-                                onChange={(e) => setOrigin(e.target.value)}
-                                required
-                            />
                         </div>
 
                         {/* Destination */}
-                        <div className="md:col-span-3 relative">
-                            <div className="absolute left-3 top-3 text-muted-foreground">
-                                <Plane className="h-5 w-5" />
+                        <div className="md:col-span-3 relative group">
+                            <label className="text-xs uppercase tracking-widest text-[#C5A059] font-bold mb-3 block pl-1">To</label>
+                            <div className="relative">
+                                <div className="absolute left-0 top-1/2 -translate-y-1/2 text-zinc-400 transition-colors group-hover:text-[#C5A059] pl-3 pointer-events-none">
+                                    <Plane className="h-5 w-5" />
+                                </div>
+                                <Input
+                                    placeholder="Destination City"
+                                    className="pl-12 h-14 text-lg border-0 border-b border-zinc-200 rounded-none focus-visible:ring-0 focus-visible:border-[#C5A059] transition-all bg-transparent placeholder:text-zinc-300 font-serif"
+                                    value={destination}
+                                    onChange={(e) => setDestination(e.target.value)}
+                                    required
+                                />
                             </div>
-                            <Input
-                                placeholder="Where to? (e.g. LHR)"
-                                className="pl-10 h-12 text-base"
-                                value={destination}
-                                onChange={(e) => setDestination(e.target.value)}
-                                required
-                            />
                         </div>
 
                         {/* Date Picker */}
-                        <div className="md:col-span-3">
+                        <div className="md:col-span-3 group">
+                            <label className="text-xs uppercase tracking-widest text-[#C5A059] font-bold mb-3 block pl-1">Departure</label>
                             <Popover>
                                 <PopoverTrigger asChild>
                                     <Button
-                                        variant={"outline"}
+                                        variant={"ghost"}
                                         className={cn(
-                                            "w-full h-12 justify-start text-left font-normal text-base",
+                                            "w-full h-14 justify-start text-left font-normal text-lg border-0 border-b border-zinc-200 rounded-none pl-12 hover:bg-transparent hover:text-[#C5A059] focus-visible:ring-0 focus-visible:border-[#C5A059] transition-all font-serif relative",
                                             !date && "text-muted-foreground"
                                         )}
                                     >
-                                        <CalendarIcon className="mr-2 h-4 w-4" />
-                                        {date ? format(date, "PPP") : <span>Pick a date</span>}
+                                        <div className="absolute left-0 top-1/2 -translate-y-1/2 text-zinc-400 group-hover:text-[#C5A059] pl-3">
+                                            <CalendarIcon className="h-5 w-5" />
+                                        </div>
+                                        {date ? format(date, "PPP") : <span>Select Date</span>}
                                     </Button>
                                 </PopoverTrigger>
-                                <PopoverContent className="w-auto p-0" align="start">
+                                <PopoverContent className="w-auto p-0 rounded-none border-zinc-100 shadow-xl" align="start">
                                     <Calendar
                                         mode="single"
                                         selected={date}
                                         onSelect={setDate}
                                         initialFocus
                                         disabled={(date) => date < new Date()}
+                                        className="rounded-none font-serif"
                                     />
                                 </PopoverContent>
                             </Popover>
                         </div>
 
                         {/* Class/Travelers */}
-                        <div className="md:col-span-3">
-                            <Select value={travelClass} onValueChange={setTravelClass}>
-                                <SelectTrigger className="h-12 w-full text-base">
-                                    <SelectValue placeholder="Class" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="ECONOMY">Economy</SelectItem>
-                                    <SelectItem value="PREMIUM_ECONOMY">Premium Economy</SelectItem>
-                                    <SelectItem value="BUSINESS">Business</SelectItem>
-                                    <SelectItem value="FIRST">First Class</SelectItem>
-                                </SelectContent>
-                            </Select>
+                        <div className="md:col-span-3 group relative">
+                            <label className="text-xs uppercase tracking-widest text-[#C5A059] font-bold mb-3 block pl-1">Cabin Class</label>
+                            <div className="relative">
+                                <div className="absolute left-0 top-1/2 -translate-y-1/2 text-zinc-400 group-hover:text-[#C5A059] pl-3 pointer-events-none z-10">
+                                    <Armchair className="h-5 w-5" />
+                                </div>
+                                <Select value={travelClass} onValueChange={setTravelClass}>
+                                    <SelectTrigger className="w-full h-14 text-lg border-0 border-b border-zinc-200 rounded-none pl-12 focus:ring-0 focus:border-[#C5A059] font-serif bg-transparent data-[placeholder]:text-zinc-300">
+                                        <SelectValue placeholder="Class" />
+                                    </SelectTrigger>
+                                    <SelectContent className="rounded-none border-zinc-100 shadow-xl font-serif">
+                                        <SelectItem value="ECONOMY">Economy</SelectItem>
+                                        <SelectItem value="PREMIUM_ECONOMY">Premium Economy</SelectItem>
+                                        <SelectItem value="BUSINESS">Business Class</SelectItem>
+                                        <SelectItem value="FIRST">First Class</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
                         </div>
                     </div>
 
-                    <Button
-                        type="submit"
-                        className="w-full md:w-auto md:self-end h-12 px-8 text-lg font-semibold bg-blue-600 hover:bg-blue-700 text-white transition-all shadow-md"
-                        disabled={isLoading}
-                    >
-                        {isLoading ? (
-                            "Searching..."
-                        ) : (
-                            <>
-                                <Search className="mr-2 h-5 w-5" />
-                                Explore
-                            </>
-                        )}
-                    </Button>
+                    <div className="flex justify-center mt-4">
+                        <Button
+                            type="submit"
+                            className="w-full md:w-auto px-16 h-14 text-lg tracking-widest font-bold bg-[#C5A059] hover:bg-[#B08D4C] text-white transition-all shadow-lg rounded-none uppercase"
+                            disabled={isLoading}
+                        >
+                            {isLoading ? (
+                                "Searching..."
+                            ) : (
+                                "Search Flights"
+                            )}
+                        </Button>
+                    </div>
                 </form>
             </CardContent>
         </Card>

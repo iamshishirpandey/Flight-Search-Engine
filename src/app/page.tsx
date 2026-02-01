@@ -39,28 +39,30 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-zinc-50 dark:bg-zinc-950 flex flex-col">
       {/* Hero Section */}
-      <div className="relative w-full h-[500px] bg-sky-900 flex flex-col items-center justify-center p-6 text-center overflow-hidden">
+      <div className="relative w-full min-h-[600px] bg-sky-900 flex flex-col items-center justify-center p-6 text-center overflow-hidden">
         {/* Background Decoration */}
         <div className="absolute inset-0 bg-blue-600 mix-blend-multiply opacity-20"></div>
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=2074&auto=format&fit=crop')] bg-cover bg-center opacity-50"></div>
 
-        <div className="relative z-10 max-w-3xl space-y-4">
-          <h1 className="text-4xl md:text-6xl font-bold text-white tracking-tight drop-shadow-md">
-            Explore the World
-          </h1>
-          <p className="text-lg md:text-xl text-zinc-100 drop-shadow-sm">
-            Find the best flight deals for your next adventure.
-          </p>
-        </div>
+        <div className="relative z-10 max-w-4xl space-y-8 w-full">
+          <div className="space-y-4">
+            <h1 className="text-4xl md:text-7xl font-serif font-bold text-white tracking-tight drop-shadow-lg">
+              Explore the World
+            </h1>
+            <p className="text-lg md:text-2xl text-zinc-100 drop-shadow-md font-light tracking-wide">
+              Experience the art of travel.
+            </p>
+          </div>
 
-        {/* Search Form Container - Overlapping the Hero */}
-        <div className="absolute -bottom-24 w-full px-4">
-          <SearchForm onSearch={handleSearch} isLoading={isLoading} />
+          {/* Search Form Container - Centered in Hero */}
+          <div className="w-full pt-8 animate-in fade-in slide-in-from-bottom-8 duration-1000">
+            <SearchForm onSearch={handleSearch} isLoading={isLoading} />
+          </div>
         </div>
       </div>
 
       {/* Results Section */}
-      <div className="flex-1 w-full max-w-7xl mx-auto px-4 pt-32 pb-16">
+      <div className="flex-1 w-full max-w-7xl mx-auto px-4 py-16">
         {hasSearched ? (
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
             <h2 className="text-2xl font-bold mb-6 text-zinc-900 dark:text-zinc-100">
