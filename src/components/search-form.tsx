@@ -2,8 +2,9 @@
 
 import * as React from "react";
 import { format } from "date-fns";
-import { Calendar as CalendarIcon, Search, Plane, Armchair } from "lucide-react";
+import { Calendar as CalendarIcon, Armchair } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { LocationInput } from "@/components/location-input";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -11,7 +12,7 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover";
-import { Input } from "@/components/ui/input";
+
 import {
     Select,
     SelectContent,
@@ -50,39 +51,25 @@ export function SearchForm({ onSearch, isLoading }: SearchFormProps) {
             <div className="h-1 bg-gradient-to-r from-[#C5A059] via-[#E6C685] to-[#C5A059]"></div>
             <CardContent className="p-8 md:p-10">
                 <form onSubmit={handleSubmit} className="flex flex-col gap-8">
-                    <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-end">
+                    <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
                         {/* Origin */}
                         <div className="md:col-span-3 relative group">
-                            <label className="text-xs uppercase tracking-widest text-[#C5A059] font-bold mb-3 block pl-1">From</label>
-                            <div className="relative">
-                                <div className="absolute left-0 top-1/2 -translate-y-1/2 text-zinc-400 transition-colors group-hover:text-[#C5A059] pl-3 pointer-events-none">
-                                    <Plane className="h-5 w-5" />
-                                </div>
-                                <Input
-                                    placeholder="Origin City"
-                                    className="pl-12 h-14 text-lg border-0 border-b border-zinc-200 rounded-none focus-visible:ring-0 focus-visible:border-[#C5A059] transition-all bg-transparent placeholder:text-zinc-300 font-serif"
-                                    value={origin}
-                                    onChange={(e) => setOrigin(e.target.value)}
-                                    required
-                                />
-                            </div>
+                            <LocationInput
+                                label="From"
+                                value={origin}
+                                onChange={setOrigin}
+                                placeholder="Origin City"
+                            />
                         </div>
 
                         {/* Destination */}
                         <div className="md:col-span-3 relative group">
-                            <label className="text-xs uppercase tracking-widest text-[#C5A059] font-bold mb-3 block pl-1">To</label>
-                            <div className="relative">
-                                <div className="absolute left-0 top-1/2 -translate-y-1/2 text-zinc-400 transition-colors group-hover:text-[#C5A059] pl-3 pointer-events-none">
-                                    <Plane className="h-5 w-5" />
-                                </div>
-                                <Input
-                                    placeholder="Destination City"
-                                    className="pl-12 h-14 text-lg border-0 border-b border-zinc-200 rounded-none focus-visible:ring-0 focus-visible:border-[#C5A059] transition-all bg-transparent placeholder:text-zinc-300 font-serif"
-                                    value={destination}
-                                    onChange={(e) => setDestination(e.target.value)}
-                                    required
-                                />
-                            </div>
+                            <LocationInput
+                                label="To"
+                                value={destination}
+                                onChange={setDestination}
+                                placeholder="Destination City"
+                            />
                         </div>
 
                         {/* Date Picker */}
@@ -124,7 +111,7 @@ export function SearchForm({ onSearch, isLoading }: SearchFormProps) {
                                     <Armchair className="h-5 w-5" />
                                 </div>
                                 <Select value={travelClass} onValueChange={setTravelClass}>
-                                    <SelectTrigger className="w-full h-14 text-lg border-0 border-b border-zinc-200 rounded-none pl-12 focus:ring-0 focus:border-[#C5A059] font-serif bg-transparent data-[placeholder]:text-zinc-300">
+                                    <SelectTrigger className="w-full !h-14 text-lg border-0 border-b border-zinc-200 rounded-none pl-12 focus:ring-0 focus:border-[#C5A059] font-serif bg-transparent data-[placeholder]:text-zinc-300">
                                         <SelectValue placeholder="Class" />
                                     </SelectTrigger>
                                     <SelectContent className="rounded-none border-zinc-100 shadow-xl font-serif">

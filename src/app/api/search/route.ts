@@ -2,64 +2,37 @@ import { NextRequest, NextResponse } from 'next/server';
 import { FlightOffer } from '@/lib/types';
 
 // Mock Data
-const MOCK_FLIGHTS: FlightOffer[] = [
-    {
-        id: '1',
-        airline: 'AA',
-        flightNumber: '101',
-        departure: { iataCode: 'JFK', at: '2024-06-01T10:00:00' },
-        arrival: { iataCode: 'LHR', at: '2024-06-01T22:00:00' },
-        duration: 'PT7H',
-        price: { currency: 'USD', total: '500.00' },
-        itineraries: [
-            {
-                duration: 'PT7H',
-                segments: [
-                    {
-                        departure: { iataCode: 'JFK', at: '2024-06-01T10:00:00' },
-                        arrival: { iataCode: 'LHR', at: '2024-06-01T22:00:00' },
-                        carrierCode: 'AA',
-                        number: '101',
-                        duration: 'PT7H',
-                    },
-                ],
-            },
-        ],
-    },
-    {
-        id: '2',
-        airline: 'BA',
-        flightNumber: '112',
-        departure: { iataCode: 'JFK', at: '2024-06-01T18:00:00' },
-        arrival: { iataCode: 'LHR', at: '2024-06-02T06:00:00' },
-        duration: 'PT7H',
-        price: { currency: 'USD', total: '620.00' },
-        itineraries: [
-            {
-                duration: 'PT7H',
-                segments: [
-                    {
-                        departure: { iataCode: 'JFK', at: '2024-06-01T18:00:00' },
-                        arrival: { iataCode: 'LHR', at: '2024-06-02T06:00:00' },
-                        carrierCode: 'BA',
-                        number: '112',
-                        duration: 'PT7H',
-                    },
-                ],
-            },
-        ],
-    },
-];
+
 
 let cachedToken: string | null = null;
 let tokenExpiry: number | null = null;
+
+interface AmadeusSegment {
+    departure: { iataCode: string; at: string };
+    arrival: { iataCode: string; at: string };
+    carrierCode: string;
+    number: string;
+    duration: string;
+}
+
+interface AmadeusItinerary {
+    duration: string;
+    segments: AmadeusSegment[];
+}
+
+interface AmadeusOffer {
+    id: string;
+    validatingAirlineCodes?: string[];
+    price: { currency: string; total: string };
+    itineraries: AmadeusItinerary[];
+}
 
 async function getAmadeusToken() {
     const clientId = process.env.NEXT_PUBLIC_AMADEUS_CLIENT_ID;
     const clientSecret = process.env.NEXT_PUBLIC_AMADEUS_CLIENT_SECRET;
 
     if (!clientId || !clientSecret || clientId.includes('REPLACE')) {
-        console.warn('Amadeus API credentials missing or invalid. Using mock data.');
+        console.error('Amadeus API credentials missing or invalid.');
         return null;
     }
 
@@ -68,6 +41,7 @@ async function getAmadeusToken() {
     }
 
     try {
+        console.log('Fetching Amadeus token...');
         const response = await fetch('https://test.api.amadeus.com/v1/security/oauth2/token', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -79,6 +53,12 @@ async function getAmadeusToken() {
         });
 
         const data = await response.json();
+
+        if (!response.ok) {
+            console.error('Amadeus Token Error:', response.status, data);
+            return null;
+        }
+
         if (data.access_token) {
             cachedToken = data.access_token;
             tokenExpiry = Date.now() + (data.expires_in * 1000);
@@ -103,8 +83,7 @@ export async function GET(request: NextRequest) {
     const token = await getAmadeusToken();
 
     if (!token) {
-        // Return mock data if token fetch fails or no credentials
-        return NextResponse.json({ data: MOCK_FLIGHTS });
+        return NextResponse.json({ error: 'Failed to authenticate with Amadeus API' }, { status: 401 });
     }
 
     try {
@@ -116,11 +95,55 @@ export async function GET(request: NextRequest) {
 
         const data = await response.json();
 
-        // Transform Amadeus response to our FlightOffer interface if needed
-        // For now, we'll try to map it roughly or pass it through if it matches enough
-        // Ideally validation/transformation happens here.
+        // Transform Amadeus response to our FlightOffer interface
+        const amadeusData = data.data || [];
+        const dictionaries = data.dictionaries || {};
 
-        return NextResponse.json(data);
+        const flightOffers: FlightOffer[] = amadeusData.map((offer: AmadeusOffer) => {
+            const firstItinerary = offer.itineraries[0];
+            const firstSegment = firstItinerary.segments[0];
+            const lastSegment = firstItinerary.segments[firstItinerary.segments.length - 1];
+
+            const airlineCode = offer.validatingAirlineCodes?.[0];
+            const airlineName = dictionaries.carriers?.[airlineCode || ''] || airlineCode;
+
+            return {
+                id: offer.id,
+                airline: airlineName || 'Unknown Airline',
+                flightNumber: `${firstSegment.carrierCode} ${firstSegment.number}`,
+                departure: {
+                    iataCode: firstSegment.departure.iataCode,
+                    at: firstSegment.departure.at
+                },
+                arrival: {
+                    iataCode: lastSegment.arrival.iataCode,
+                    at: lastSegment.arrival.at
+                },
+                duration: firstItinerary.duration,
+                price: {
+                    currency: offer.price.currency,
+                    total: offer.price.total
+                },
+                itineraries: offer.itineraries.map((itinerary: AmadeusItinerary) => ({
+                    duration: itinerary.duration,
+                    segments: itinerary.segments.map((segment: AmadeusSegment) => ({
+                        departure: {
+                            iataCode: segment.departure.iataCode,
+                            at: segment.departure.at
+                        },
+                        arrival: {
+                            iataCode: segment.arrival.iataCode,
+                            at: segment.arrival.at
+                        },
+                        carrierCode: segment.carrierCode,
+                        number: segment.number,
+                        duration: segment.duration
+                    }))
+                }))
+            };
+        });
+
+        return NextResponse.json(flightOffers);
     } catch (error) {
         console.error('Amadeus API call failed:', error);
         return NextResponse.json({ error: 'Failed to fetch flight offers' }, { status: 500 });

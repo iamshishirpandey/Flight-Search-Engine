@@ -26,8 +26,14 @@ export default function Home() {
       const response = await fetch(`/api/search?${queryParams.toString()}`);
       const data = await response.json();
 
-      if (data.data) {
+      if (Array.isArray(data)) {
+        setFlights(data);
+      } else if (data.data && Array.isArray(data.data)) {
+        // Fallback for mock data structure if ever used
         setFlights(data.data);
+      } else {
+        console.warn("Unexpected API response format:", data);
+        setFlights([]);
       }
     } catch (error) {
       console.error("Failed to fetch flights:", error);

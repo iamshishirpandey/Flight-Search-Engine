@@ -1,10 +1,9 @@
 "use client";
 
 import { FlightOffer } from "@/lib/types";
-import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Clock, ArrowRight, Plane } from "lucide-react";
+import { ArrowRight, Plane } from "lucide-react";
 import { format, parseISO } from "date-fns";
 
 interface FlightResultsProps {
