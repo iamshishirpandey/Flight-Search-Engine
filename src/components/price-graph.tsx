@@ -60,7 +60,7 @@ export function PriceGraph({ flights }: PriceGraphProps) {
     if (flights.length === 0) return null;
 
     return (
-        <Card className="w-full shadow-sm border border-[#E5E5E5] bg-white rounded-sm overflow-hidden mb-6">
+        <Card className="w-full border border-[#E5E5E5] bg-white rounded-sm overflow-hidden mb-6">
             <div className="h-[1px] bg-gradient-to-r from-transparent via-[#C5A059] to-transparent"></div>
             <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-light tracking-[0.2em] uppercase text-[#C5A059]">
@@ -85,7 +85,7 @@ export function PriceGraph({ flights }: PriceGraphProps) {
                                 if (active && payload && payload.length) {
                                     const data = payload[0].payload;
                                     return (
-                                        <div className="bg-white border border-[#E5E5E5] p-2 shadow-xl rounded-sm">
+                                        <div className="bg-white border border-[#E5E5E5] p-2 rounded-sm">
                                             <p className="text-[#2C2C2C] font-medium text-xs font-serif">{data.fullRange}</p>
                                             <p className="text-[#C5A059] text-xs uppercase tracking-wider">{data.count} Flights</p>
                                         </div>

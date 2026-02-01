@@ -119,7 +119,199 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   LUXURY DESIGN SYSTEM - Micro-interactions & Animations
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Shimmer Effect */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.shimmer {
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(197, 160, 89, 0.08) 50%,
+      transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmer 2s ease-in-out infinite;
+}
+
+/* Subtle Floating Animation */
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Gentle Pulse */
+@keyframes gentle-pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.animate-gentle-pulse {
+  animation: gentle-pulse 2s ease-in-out infinite;
+}
+
+/* Gold Glow Effect */
+@keyframes gold-glow {
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(197, 160, 89, 0);
+  }
+
+  50% {
+    box-shadow: 0 0 20px 2px rgba(197, 160, 89, 0.15);
+  }
+}
+
+.animate-gold-glow {
+  animation: gold-glow 3s ease-in-out infinite;
+}
+
+/* Plane Fly Animation */
+@keyframes plane-fly {
+  0% {
+    transform: translateX(-10px) rotate(90deg);
+    opacity: 0;
+  }
+
+  20% {
+    opacity: 1;
+  }
+
+  80% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateX(10px) rotate(90deg);
+    opacity: 0;
+  }
+}
+
+.animate-plane-fly {
+  animation: plane-fly 2s ease-in-out infinite;
+}
+
+/* Staggered fade-in for list items */
+@keyframes stagger-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-stagger-in {
+  animation: stagger-in 0.5s ease-out forwards;
+}
+
+/* Gradient border animation */
+@keyframes gradient-shift {
+
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.animate-gradient-border {
+  background: linear-gradient(90deg, #C5A059, #E8D4A8, #C5A059);
+  background-size: 200% 200%;
+  animation: gradient-shift 3s ease infinite;
+}
+
+/* Hover lift effect */
+.hover-lift {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+}
+
+/* Smooth underline effect */
+.underline-grow {
+  position: relative;
+}
+
+.underline-grow::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: #C5A059;
+  transition: width 0.3s ease;
+}
+
+.underline-grow:hover::after {
+  width: 100%;
+}
+
+/* Custom scrollbar for luxury feel */
+.scrollbar-luxury::-webkit-scrollbar {
+  width: 4px;
+}
+
+.scrollbar-luxury::-webkit-scrollbar-track {
+  background: #F5F3EF;
+}
+
+.scrollbar-luxury::-webkit-scrollbar-thumb {
+  background: #C5A059;
+  border-radius: 2px;
+}
+
+.scrollbar-luxury::-webkit-scrollbar-thumb:hover {
+  background: #B08D4C;
+}
+
+/* Loading skeleton */
+.skeleton {
+  background: linear-gradient(90deg, #F5F3EF 25%, #FAFAF8 50%, #F5F3EF 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
 }

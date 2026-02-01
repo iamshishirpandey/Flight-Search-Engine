@@ -57,7 +57,7 @@ export function FilterSidebar({ flights, filters, onFilterChange }: FilterSideba
     if (flights.length === 0) return null;
 
     return (
-        <Card className="w-full shadow-sm border border-[#E5E5E5] bg-white rounded-sm h-fit">
+        <Card className="w-full border border-[#E5E5E5] bg-white rounded-sm h-fit">
             <div className="h-[1px] bg-gradient-to-r from-transparent via-[#C5A059] to-transparent"></div>
             <CardHeader className="pb-4">
                 <CardTitle className="text-sm font-light tracking-[0.2em] uppercase text-[#C5A059]">

@@ -125,7 +125,7 @@ export default function Home() {
         <div className="relative z-10 max-w-5xl space-y-8 w-full">
           {/* Logo/Brand Mark */}
           <div className="flex justify-center mb-2">
-            <div className="w-14 h-14 border border-[#C5A059] flex items-center justify-center">
+            <div className="w-14 h-14 border border-[#C5A059] flex items-center justify-center animate-float animate-gold-glow">
               <span className="text-[#C5A059] font-serif text-xl font-bold tracking-widest">S</span>
             </div>
           </div>
@@ -177,14 +177,16 @@ export default function Home() {
 
                 {/* Flight List */}
                 <div className="lg:col-span-3">
-                  <div className="flex items-center gap-4 mb-8">
-                    <div className="w-10 h-[1px] bg-[#C5A059]"></div>
-                    <h2 className="text-sm font-light tracking-[0.3em] uppercase text-[#2C2C2C]">
-                      {filteredFlights.length > 0 ? `${filteredFlights.length} Flights Found` : "No Flights Match Filters"}
-                    </h2>
-                    <div className="flex-1 h-[1px] bg-[#E5E5E5]"></div>
-                  </div>
-                  <FlightResults flights={filteredFlights} />
+                  {filteredFlights.length > 0 && (
+                    <div className="flex items-center gap-4 mb-8">
+                      <div className="w-10 h-[1px] bg-[#C5A059]"></div>
+                      <h2 className="text-sm font-light tracking-[0.3em] uppercase text-[#2C2C2C]">
+                        {filteredFlights.length} Flights Found
+                      </h2>
+                      <div className="flex-1 h-[1px] bg-[#E5E5E5]"></div>
+                    </div>
+                  )}
+                  <FlightResults flights={filteredFlights} isLoading={isLoading} />
                 </div>
               </div>
             </div>

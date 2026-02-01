@@ -25,16 +25,20 @@ interface LocationInputProps {
     label: string;
     placeholder?: string;
     className?: string;
+    hasError?: boolean;
 }
 
-export function LocationInput({ value, onChange, label, placeholder = "Select city...", className }: LocationInputProps) {
+export function LocationInput({ value, onChange, label, placeholder = "Select city...", className, hasError }: LocationInputProps) {
     const [open, setOpen] = React.useState(false);
 
     const selectedAirport = airports.find((airport) => airport.code === value);
 
     return (
         <div className={cn("p-4", className)}>
-            <label className="text-xs uppercase tracking-widest text-[#C5A059] font-bold mb-2 block">{label}</label>
+            <label className={cn(
+                "text-xs uppercase tracking-widest font-bold mb-2 block",
+                hasError ? "text-red-500" : "text-[#C5A059]"
+            )}>{label}</label>
             <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
                     <Button
@@ -46,7 +50,10 @@ export function LocationInput({ value, onChange, label, placeholder = "Select ci
                             !value && "text-[#ACACAC]"
                         )}
                     >
-                        <div className="absolute left-0 top-1/2 -translate-y-1/2 text-[#C5A059] transition-colors group-hover:text-[#C5A059] pointer-events-none">
+                        <div className={cn(
+                            "absolute left-0 top-1/2 -translate-y-1/2 transition-colors pointer-events-none",
+                            hasError ? "text-red-400" : "text-[#C5A059] group-hover:text-[#C5A059]"
+                        )}>
                             <Plane className="h-5 w-5" />
                         </div>
                         {selectedAirport ? (
@@ -58,7 +65,7 @@ export function LocationInput({ value, onChange, label, placeholder = "Select ci
                         )}
                     </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-[300px] p-0 border-[#E5E5E5] bg-white shadow-lg font-serif rounded-sm" align="start">
+                <PopoverContent className="w-[300px] p-0 border-[#E5E5E5] bg-white font-serif rounded-sm" align="start">
                     <Command className="bg-white">
                         <CommandInput placeholder="Search city or airport..." className="text-[#2C2C2C] placeholder:text-[#ACACAC]" />
                         <CommandList>
