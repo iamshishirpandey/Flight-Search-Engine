@@ -75,6 +75,9 @@ export async function GET(request: NextRequest) {
     const origin = searchParams.get('origin');
     const destination = searchParams.get('destination');
     const date = searchParams.get('date');
+    const returnDate = searchParams.get('returnDate');
+    const adults = searchParams.get('adults') || '1';
+    const travelClass = searchParams.get('travelClass');
 
     if (!origin || !destination || !date) {
         return NextResponse.json({ error: 'Missing required parameters' }, { status: 400 });
@@ -87,7 +90,15 @@ export async function GET(request: NextRequest) {
     }
 
     try {
-        const amadeusUrl = `https://test.api.amadeus.com/v2/shopping/flight-offers?originLocationCode=${origin}&destinationLocationCode=${destination}&departureDate=${date}&adults=1&nonStop=false&max=10`;
+        let amadeusUrl = `https://test.api.amadeus.com/v2/shopping/flight-offers?originLocationCode=${origin}&destinationLocationCode=${destination}&departureDate=${date}&adults=${adults}&nonStop=false&max=10`;
+
+        if (returnDate) {
+            amadeusUrl += `&returnDate=${returnDate}`;
+        }
+
+        if (travelClass) {
+            amadeusUrl += `&travelClass=${travelClass}`;
+        }
 
         const response = await fetch(amadeusUrl, {
             headers: { Authorization: `Bearer ${token}` },

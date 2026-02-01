@@ -33,8 +33,8 @@ export function LocationInput({ value, onChange, label, placeholder = "Select ci
     const selectedAirport = airports.find((airport) => airport.code === value);
 
     return (
-        <div className={className}>
-            <label className="text-xs uppercase tracking-widest text-[#C5A059] font-bold mb-3 block pl-1">{label}</label>
+        <div className={cn("p-4", className)}>
+            <label className="text-xs uppercase tracking-widest text-[#C5A059] font-bold mb-2 block">{label}</label>
             <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
                     <Button
@@ -42,11 +42,11 @@ export function LocationInput({ value, onChange, label, placeholder = "Select ci
                         role="combobox"
                         aria-expanded={open}
                         className={cn(
-                            "w-full h-14 justify-start text-left font-normal text-lg border-0 border-b border-zinc-200 rounded-none pl-12 hover:bg-transparent hover:text-[#C5A059] focus-visible:ring-0 focus-visible:border-[#C5A059] transition-all font-serif relative",
-                            !value && "text-muted-foreground"
+                            "w-full h-12 justify-start text-left font-normal text-lg border-0 rounded-none pl-10 hover:bg-transparent hover:text-[#C5A059] focus-visible:ring-0 transition-all font-serif relative text-[#2C2C2C]",
+                            !value && "text-[#ACACAC]"
                         )}
                     >
-                        <div className="absolute left-0 top-1/2 -translate-y-1/2 text-zinc-400 transition-colors group-hover:text-[#C5A059] pl-3 pointer-events-none">
+                        <div className="absolute left-0 top-1/2 -translate-y-1/2 text-[#C5A059] transition-colors group-hover:text-[#C5A059] pointer-events-none">
                             <Plane className="h-5 w-5" />
                         </div>
                         {selectedAirport ? (
@@ -54,16 +54,16 @@ export function LocationInput({ value, onChange, label, placeholder = "Select ci
                                 {selectedAirport.city} ({selectedAirport.code})
                             </span>
                         ) : (
-                            <span className="text-zinc-300">{placeholder}</span>
+                            <span>{placeholder}</span>
                         )}
                     </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-[300px] p-0 rounded-none border-zinc-100 shadow-xl font-serif" align="start">
-                    <Command>
-                        <CommandInput placeholder="Search city or airport..." />
+                <PopoverContent className="w-[300px] p-0 border-[#E5E5E5] bg-white shadow-lg font-serif rounded-sm" align="start">
+                    <Command className="bg-white">
+                        <CommandInput placeholder="Search city or airport..." className="text-[#2C2C2C] placeholder:text-[#ACACAC]" />
                         <CommandList>
-                            <CommandEmpty>No results found.</CommandEmpty>
-                            <CommandGroup heading="Suggestions">
+                            <CommandEmpty className="text-[#ACACAC] py-6 text-center text-sm">No results found.</CommandEmpty>
+                            <CommandGroup heading="Suggestions" className="text-[#8C8C8C]">
                                 {airports.map((airport) => (
                                     <CommandItem
                                         key={airport.code}
@@ -72,12 +72,12 @@ export function LocationInput({ value, onChange, label, placeholder = "Select ci
                                             onChange(airport.code);
                                             setOpen(false);
                                         }}
-                                        className="cursor-pointer aria-selected:bg-zinc-100 dark:aria-selected:bg-zinc-800"
+                                        className="cursor-pointer aria-selected:bg-[#F5F3EF] text-[#2C2C2C]"
                                     >
                                         <div className="flex items-center justify-between w-full">
                                             <div className="flex flex-col">
                                                 <span className="font-medium">{airport.city}</span>
-                                                <span className="text-xs text-muted-foreground">{airport.name}</span>
+                                                <span className="text-xs text-[#8C8C8C]">{airport.name}</span>
                                             </div>
                                             <span className="font-bold text-[#C5A059] ml-2">{airport.code}</span>
                                         </div>
